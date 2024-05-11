@@ -20,7 +20,7 @@ def print2D(root):
         print()
         for _ in range(COUNT[0], space):
             print(end=" ")
-        print(root.value)
+        print(root.key)
 
         # Process left child
         print2DUtil(root.left, space)

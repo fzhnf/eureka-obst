@@ -12,7 +12,7 @@ from utils import print2D, time_it
 
 @dataclass
 class BstNode:
-    value: str
+    key: str
     left: BstNode | None = None
     right: BstNode | None = None
     parent: BstNode | None = None  # Added in order to delete a node easier
@@ -25,15 +25,15 @@ class BstNode:
         [-1, 0, 1]
         """
         yield from self.left or []
-        yield self.value
+        yield self.key
         yield from self.right or []
 
     def __repr__(self) -> str:
         from pprint import pformat
 
         if self.left is None and self.right is None:
-            return str(self.value)
-        return pformat({f"{self.value}": (self.left, self.right)}, indent=1)
+            return str(self.key)
+        return pformat({f"{self.key}": (self.left, self.right)}, indent=1)
 
     @property
     def is_right(self) -> bool:
@@ -67,11 +67,11 @@ class BinarySearchTree:
     def empty(self) -> bool:
         return not self.root
 
-    def __insert(self, value) -> None:
+    def __insert(self, key) -> None:
         """
         Insert a new node in Binary Search Tree with value label
         """
-        new_node = BstNode(value)  # create a new Node
+        new_node = BstNode(key)  # create a new Node
         if self.empty():  # if Tree is empty
             self.root = new_node  # set its root
         else:  # Tree is not empty
@@ -79,7 +79,7 @@ class BinarySearchTree:
             if parent_node is None:
                 return
             while True:  # While we don't get to a leaf
-                if value < parent_node.value:  # We go left
+                if key < parent_node.key:  # We go left
                     if parent_node.left is None:
                         parent_node.left = new_node  # We insert the new node in a leaf
                         break
@@ -92,19 +92,19 @@ class BinarySearchTree:
                     parent_node = parent_node.right
             new_node.parent = parent_node
 
-    def insert(self, *values) -> Self:
-        for value in values:
-            self.__insert(value)
+    def insert(self, *keys) -> Self:
+        for key in keys:
+            self.__insert(key)
         return self
 
-    def search(self, value) -> BstNode | None:
+    def search(self, key) -> BstNode | None:
         if self.empty():
             raise IndexError("Warning: Tree is empty! please use another.")
         else:
             node = self.root
             # lazy evaluation, avoid NoneType Attribute error
-            while node is not None and node.value is not value:
-                node = node.left if value < node.value else node.right
+            while node is not None and node.key is not key:
+                node = node.left if key < node.key else node.right
             return node
 
     def get_max(self, node: BstNode | None = None) -> BstNode | None:
@@ -128,10 +128,10 @@ class BinarySearchTree:
                 node = node.left
         return node
 
-    def remove(self, value: int) -> None:
-        node = self.search(value)
+    def remove(self, key: int) -> None:
+        node = self.search(key)
         if node is None:
-            msg = f"Value {value} not found"
+            msg = f"Value {key} not found"
             raise ValueError(msg)
 
         if node.left is None and node.right is None:  # If it has no children
@@ -144,9 +144,9 @@ class BinarySearchTree:
             predecessor = self.get_max(
                 node.left
             )  # Gets the max value of the left branch
-            self.remove(predecessor.value)  # type: ignore[union-attr]
-            node.value = (
-                predecessor.value  # type: ignore[union-attr]
+            self.remove(predecessor.key)  # type: ignore[union-attr]
+            node.key = (
+                predecessor.key  # type: ignore[union-attr]
             )  # Assigns the value to the node to delete and keep tree structure
 
     def preorder_traverse(self, node: BstNode | None) -> Iterable:
@@ -183,20 +183,11 @@ if __name__ == "__main__":
     #
     # doctest.testmod(verbose=True)
     t = BinarySearchTree().insert(
-        "e",
-        "c",
-        "g",
-        "b",
-        "d",
-        "f",
-        "h",
-        "a",
-        "i",
-        "j",
+        "e", "c", "g", "b", "d", "f", "h", "a", "i", "j", "j", "j", "j"
     )
     print2D(t.root)
 
-    print(tuple(i.value for i in t.traversal_tree()))
+    print(tuple(i.key for i in t.traversal_tree()))
 
     # time_it(t.search, int(sys.argv[1]) if len(sys.argv) > 1 else 10)
     # print(t)
