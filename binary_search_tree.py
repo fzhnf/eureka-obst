@@ -1,8 +1,13 @@
+#!/usr/bin/env python3
+
 from __future__ import annotations
 
+import sys
 from collections.abc import Iterable, Iterator
 from dataclasses import dataclass
 from typing import Self
+
+from utils import print2D, time_it
 
 
 @dataclass
@@ -172,47 +177,28 @@ class BinarySearchTree:
         else:
             return traversal_function(self.root)
 
-def print2DUtil(root, space=0):
- 
-    # Base case
-    if (root == None):
-        return
- 
-    # Increase distance between levels
-    space += COUNT[0]
- 
-    # Process right child first
-    print2DUtil(root.right, space)
- 
-    # Print current node after space
-    # count
-    print()
-    for _ in range(COUNT[0], space):
-        print(end=" ")
-    print(root.value)
- 
-    # Process left child
-    print2DUtil(root.left, space)
- 
- 
+
 if __name__ == "__main__":
     # import doctest
     #
     # doctest.testmod(verbose=True)
-    t = BinarySearchTree().insert(8, 3, 6, 1, 10, 14, 13, 4, 7)
-    print(" ".join(repr(i.value) for i in t.traversal_tree()))
+    t = BinarySearchTree().insert(10, 1, 20, 5, 15, 2, 7, 12, 17, 22)
+    print2D(t.root)
 
-    print(tuple(i.value for i in t.traversal_tree(t.inorder_traverse)))
-    print(tuple(t))
-    # t.find_kth_smallest3, t.root)
-    print(tuple(t)[3 - 1])
+    time_it(t.search, int(sys.argv[1]) if len(sys.argv) > 1 else 10)
+    # print(t)
+    # print(" ".join(repr(i) for i in t))
 
-    print(" ".join(repr(i.value) for i in t.traversal_tree(t.postorder_traverse)))
-    # t.remove(20)
-
-    testlist = (8, 3, 6, 1, 10, 14, 13, 4, 7)
-    t = BinarySearchTree()
-    COUNT = [10]
-    for i in testlist:
-        t.insert(i)  # doctest: +ELLIPSIS
-    print2DUtil(t.root)
+    #
+    # print(tuple(i.value for i in t.traversal_tree(t.inorder_traverse)))
+    # print(tuple(t))
+    #
+    # print(" ".join(repr(i.value) for i in t.traversal_tree(t.postorder_traverse)))
+    # # t.remove(20)
+    #
+    # testlist = (8, 3, 6, 1, 10, 14, 13, 4, 7)
+    # t = BinarySearchTree()
+    # COUNT = [10]
+    # for i in testlist:
+    #     t.insert(i)  # doctest: +ELLIPSIS
+    # print2DUtil(t.root)
