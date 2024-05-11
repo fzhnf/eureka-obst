@@ -19,19 +19,49 @@
 from __future__ import annotations
 
 import sys
+from collections import Counter, Iterable, Iterator
 from random import randint
 from typing import Self
 
-from binary_search_tree import BinarySearchTree
+from binarySearchTree import BinarySearchTree, BstNode
 from utils import print2D, time_it
 
 
-class _Node:
+class BstNode:
+    value: str
+    left: BstNode | None = None
+    right: BstNode | None = None
+    parent: BstNode | None = None  # Added in order to delete a node easier
+
+    def __iter__(self) -> Iterator[str]:
+        """
+        >>> list(Node(0))
+        [0]
+        >>> list(Node(0, Node(-1), Node(1), None))
+        [-1, 0, 1]
+        """
+        yield from self.left or []
+        yield self.value
+        yield from self.right or []
+
+    def __repr__(self) -> str:
+        from pprint import pformat
+
+        if self.left is None and self.right is None:
+            return str(self.value)
+        return pformat({f"{self.value}": (self.left, self.right)}, indent=1)
+
+    @property
+    def is_right(self) -> bool:
+        return bool(self.parent and self is self.parent.right)
+
+
+class ObstNode(BstNode):
     """Binary Search Tree Node"""
 
     def __init__(self, key, freq):
-        self.key = key
-        self.freq = freq
+        self.key: str = key
+        self.freq: int = freq
 
     def __str__(self):
         """
@@ -78,7 +108,7 @@ def find_optimal_binary_search_tree(nodes):
     Implemented from CLRS (Introduction to Algorithms) book.
     https://en.wikipedia.org/wiki/Introduction_to_Algorithms
 
-    >>> find_optimal_binary_search_tree([Node(12, 8), Node(10, 34), Node(20, 50), \
+    >>> find_optimal_binary_search_tree([Node(12, 8), Node(10, 34), Node(20, 50),
                                          Node(42, 3), Node(25, 40), Node(37, 30)])
     Binary search tree nodes:
     Node(key=10, freq=34)
@@ -142,5 +172,10 @@ def find_optimal_binary_search_tree(nodes):
 
 if __name__ == "__main__":
     # A sample binary search tree
-    nodes = [_Node(i, randint(1, 50)) for i in range(10, 0, -1)]
+    # nodes = [_Node(i, randint(1, 50)) for i in range(10, 0, -1)]
+
+    d = ["e", "c", "g", "b", "d", "f", "h", "a", "i", "j"]
+
+    nodes = [ObstNode(val, freq) for val, freq in Counter(d).items()]
+    print(*nodes)
     find_optimal_binary_search_tree(nodes)
