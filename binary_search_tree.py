@@ -2,15 +2,15 @@ from __future__ import annotations
 
 from collections.abc import Iterable, Iterator
 from dataclasses import dataclass
-from typing import Any, Self
+from typing import Self
 
 
 @dataclass
-class Node:
+class _Node:
     value: int
-    left: Node | None = None
-    right: Node | None = None
-    parent: Node | None = None  # Added in order to delete a node easier
+    left: _Node | None = None
+    right: _Node | None = None
+    parent: _Node | None = None  # Added in order to delete a node easier
 
     def __iter__(self) -> Iterator[int]:
         """
@@ -37,7 +37,7 @@ class Node:
 
 @dataclass
 class BinarySearchTree:
-    root: Node | None = None
+    root: _Node | None = None
 
     def __bool__(self) -> bool:
         return bool(self.root)
@@ -48,7 +48,7 @@ class BinarySearchTree:
     def __str__(self) -> str:
         return str(self.root)
 
-    def __reassign_nodes(self, node: Node, new_children: Node | None) -> None:
+    def __reassign_nodes(self, node: _Node, new_children: _Node | None) -> None:
         if new_children is not None:  # reset its kids
             new_children.parent = node.parent
         if node.parent is not None:  # reset its parent
@@ -66,7 +66,7 @@ class BinarySearchTree:
         """
         Insert a new node in Binary Search Tree with value label
         """
-        new_node = Node(value)  # create a new Node
+        new_node = _Node(value)  # create a new Node
         if self.empty():  # if Tree is empty
             self.root = new_node  # set its root
         else:  # Tree is not empty
@@ -92,7 +92,7 @@ class BinarySearchTree:
             self.__insert(value)
         return self
 
-    def search(self, value) -> Node | None:
+    def search(self, value) -> _Node | None:
         if self.empty():
             raise IndexError("Warning: Tree is empty! please use another.")
         else:
@@ -102,7 +102,7 @@ class BinarySearchTree:
                 node = node.left if value < node.value else node.right
             return node
 
-    def get_max(self, node: Node | None = None) -> Node | None:
+    def get_max(self, node: _Node | None = None) -> _Node | None:
         if node is None:
             if self.root is None:
                 return None
@@ -112,7 +112,7 @@ class BinarySearchTree:
                 node = node.right
         return node
 
-    def get_min(self, node: Node | None = None) -> Node | None:
+    def get_min(self, node: _Node | None = None) -> _Node | None:
         if node is None:
             node = self.root
         if self.root is None:
@@ -144,25 +144,25 @@ class BinarySearchTree:
                 predecessor.value  # type: ignore[union-attr]
             )  # Assigns the value to the node to delete and keep tree structure
 
-    def preorder_traverse(self, node: Node | None) -> Iterable:
+    def preorder_traverse(self, node: _Node | None) -> Iterable:
         if node is not None:
             yield node  # Preorder Traversal
             yield from self.preorder_traverse(node.left)
             yield from self.preorder_traverse(node.right)
 
-    def inorder_traverse(self, node: Node | None) -> Iterable:
+    def inorder_traverse(self, node: _Node | None) -> Iterable:
         if node is not None:
             yield from self.inorder_traverse(node.left)
             yield node
             yield from self.inorder_traverse(node.right)
 
-    def postorder_traverse(self, node: Node | None) -> Iterable:
+    def postorder_traverse(self, node: _Node | None) -> Iterable:
         if node is not None:
             yield from self.postorder_traverse(node.left)
             yield from self.postorder_traverse(node.right)
             yield node
 
-    def traversal_tree(self, traversal_function=None) -> Any:
+    def traversal_tree(self, traversal_function=None) -> Iterable:
         """
         This function traversal the tree.
         You can pass a function to traversal the tree as needed by client code
@@ -172,16 +172,29 @@ class BinarySearchTree:
         else:
             return traversal_function(self.root)
 
-
-def print_space(n, removed):
-    for _ in range(n):
-        print("\t", end="")
-    if removed is None:
-        print(" ", end="")
-    else:
-        print(removed.value, end="")
-
-
+def print2DUtil(root, space=0):
+ 
+    # Base case
+    if (root == None):
+        return
+ 
+    # Increase distance between levels
+    space += COUNT[0]
+ 
+    # Process right child first
+    print2DUtil(root.right, space)
+ 
+    # Print current node after space
+    # count
+    print()
+    for _ in range(COUNT[0], space):
+        print(end=" ")
+    print(root.value)
+ 
+    # Process left child
+    print2DUtil(root.left, space)
+ 
+ 
 if __name__ == "__main__":
     # import doctest
     #
@@ -199,5 +212,7 @@ if __name__ == "__main__":
 
     testlist = (8, 3, 6, 1, 10, 14, 13, 4, 7)
     t = BinarySearchTree()
+    COUNT = [10]
     for i in testlist:
         t.insert(i)  # doctest: +ELLIPSIS
+    print2DUtil(t.root)
