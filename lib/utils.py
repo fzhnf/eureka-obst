@@ -62,7 +62,7 @@ def maxDepth(node):
 def time_it(func, *args, **kwargs) -> tuple[Any, float]:
     start: float = time()
     result: Any = func(*args, **kwargs)
-    finish: float = start - time()
+    finish: float = time() - start
     return (result, finish)
 
 
