@@ -63,7 +63,6 @@ def time_it(func, *args, **kwargs) -> tuple[Any, float]:
     start: float = time()
     result: Any = func(*args, **kwargs)
     finish: float = start - time()
-    print(result, finish)
     return (result, finish)
 
 
