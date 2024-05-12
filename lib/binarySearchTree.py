@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+from collections import Counter
 from collections.abc import Iterable, Iterator
 from dataclasses import dataclass
-from typing import Self
+from time import time
+from typing import Any, Self
 
 # from utils import print2D, time_it
 
@@ -103,7 +105,7 @@ class BsTree:
         else:
             node = self.root
             # lazy evaluation, avoid NoneType Attribute error
-            while node is not None and node.key is not key:
+            while node != None and node.key != key:
                 node = node.left if key < node.key else node.right
             return node
 
@@ -178,34 +180,65 @@ class BsTree:
             return traversal_function(self.root)
 
 
-if __name__ == "__main__":
-    # import doctest
-    #
-    # doctest.testmod(verbose=True)
-    # d = {"e", "c", "g", "b", "d", "f", "h", "a", "i", "j", "j", "j", "j"}
-    d = {"e": "c", "g": "b", "d": "f", "h": "a", "i": "j", "j": "j"}
-    a = [a for a in d]
-    print(a)
-    t = BsTree().insert(**d)
-    print(t)
-    # print2D(t.root)
+# def time_it(func, *args, **kwargs) -> tuple[Any, float]:
+#     start: float = time()
+#     result: Any = func(*args, **kwargs)
+#     finish: float = start - time()
+#     print(result, finish)
+#     return (result, finish)
+#
+#
+# def txt_to_nodes(file_path: str):
+#     with open(file_path, "r") as f:
+#         data = f.read().splitlines()
+#         # print(data)
+#         d: dict[str, list[str]] = dict()
+#         l: list[str] = []
+#         for line in data:
+#             k, v = line.split("=")
+#             l.append(k)
+#             v = v.split(",")
+#             if d.get(k):
+#                 d[k].extend(v)
+#             else:
+#                 d[k] = v
+#         return [BstNode(key, d[key]) for key, _ in Counter(l).items()]
+#
 
-    print(tuple(i.key for i in t.traversal_tree()))
+# if __name__ == "__main__":
+# import doctest
+#
+# doctest.testmod(verbose=True)
+# d = {"e", "c", "g", "b", "d", "f", "h", "a", "i", "j", "j", "j", "j"}
+# do = txt_to_nodes("dictionary(english-chinese).txt")
+# d = dict()
+# for data in do:
+#     d[data.key] = data.value
+# a = [a for a in d]
+# b = [b for b in d.values()]
+# print(d)
+# t = BsTree().insert(**d)
+#
+# print(t)
+# # print2D(t.root)
+#
+# r = t.search("he")
+#
+# print(r)
+# time_it(t.search, int(sys.argv[1]) if len(sys.argv) > 1 else 10)
+# print(t)
+# print(" ".join(repr(i) for i in t))
 
-    # time_it(t.search, int(sys.argv[1]) if len(sys.argv) > 1 else 10)
-    # print(t)
-    # print(" ".join(repr(i) for i in t))
-
-    #
-    # print(tuple(i.value for i in t.traversal_tree(t.inorder_traverse)))
-    # print(tuple(t))
-    #
-    # print(" ".join(repr(i.value) for i in t.traversal_tree(t.postorder_traverse)))
-    # # t.remove(20)
-    #
-    # testlist = (8, 3, 6, 1, 10, 14, 13, 4, 7)
-    # t = BinarySearchTree()
-    # COUNT = [10]
-    # for i in testlist:
-    #     t.insert(i)  # doctest: +ELLIPSIS
-    # print2DUtil(t.root)
+#
+# print(tuple(i.value for i in t.traversal_tree(t.inorder_traverse)))
+# print(tuple(t))
+#
+# print(" ".join(repr(i.value) for i in t.traversal_tree(t.postorder_traverse)))
+# # t.remove(20)
+#
+# testlist = (8, 3, 6, 1, 10, 14, 13, 4, 7)
+# t = BinarySearchTree()
+# COUNT = [10]
+# for i in testlist:
+#     t.insert(i)  # doctest: +ELLIPSIS
+# print2DUtil(t.root)

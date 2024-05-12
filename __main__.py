@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 
+from os import get_terminal_size
 
 from lib.binarySearchTree import BsTree
 from lib.optimalBinarySearchTree import find_optimal_binary_search_tree
-from lib.utils import print2D, time_it, txt_to_nodes
+from lib.utils import maxDepth, print2D, time_it, txt_to_nodes
 
 print("Hello, welcome to the Optimal Binary Search Tree program!")
 do = txt_to_nodes("dictionary(english-chinese).txt")
@@ -12,16 +13,38 @@ for data in do:
     d[data.key] = data.value
 t = BsTree().insert(**d)
 to = find_optimal_binary_search_tree(do)
+
+term_size = get_terminal_size()
 print(to)
 print(t)
-
+print()
+print()
+print()
+print("-" * term_size.columns)
+print("search time differences:")
+print("BST:")
 print2D(t.root)
+print("-" * term_size.columns)
+print("Optimal BST:")
 print2D(to.root)
-
-result1, time1 = time_it(t.search, "japanese")
-result2, time2 = time_it(to.search, "japanese")
-print(result1, time1)
-print(result2, time2)
+print()
+print()
+print()
+print("-" * term_size.columns)
+print("search time differences:")
+result1, time1 = time_it(t.search, "korean")
+result2, time2 = time_it(to.search, "korean")
+print(f"BST: {result1.value} found in {time1} seconds")
+print(f"Optimal BST: {result2.value} found in {time2} seconds")
+print()
+print()
+print()
+print("-" * term_size.columns)
+print("height differences:")
+t_height = maxDepth(t.root)
+to_height = maxDepth(to.root)
+print(f"BST highest height: {t_height}")
+print(f"OBST highest height: {to_height}")
 
 
 # print("Binary search tree nodes:")
