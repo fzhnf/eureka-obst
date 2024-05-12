@@ -1,4 +1,13 @@
+#!/usr/bin/env python3
+
+from collections import Counter
 from time import time
+from typing import Any
+
+from lib.binarySearchTree import BstNode
+from lib.optimalBinarySearchTree import ObstNode
+
+# from optimalBinarySearchTree import ObstNode
 
 
 def print2D(root):
@@ -20,7 +29,10 @@ def print2D(root):
         print()
         for _ in range(COUNT[0], space):
             print(end=" ")
-        print(root.key)
+        node_label = [root.key[0:3], root.value[0:3]]
+        if hasattr(root, "freq"):
+            node_label.append(root.freq)
+        print(*node_label)
 
         # Process left child
         print2DUtil(root.left, space)
@@ -29,8 +41,32 @@ def print2D(root):
     print2DUtil(root, 0)
 
 
-def time_it(func, *args, **kwargs) -> None:
+def time_it(func, *args, **kwargs) -> tuple[Any, float]:
     start: float = time()
-    func(*args, **kwargs)
-    end: float = time()
-    print(f"Time taken: {end - start:.10f}s")
+    result: Any = func(*args, **kwargs)
+    finish: float = start - time()
+    return (result, finish)
+
+
+def txt_to_nodes(file_path: str):
+    with open(file_path, "r") as f:
+        data = f.read().splitlines()
+        # print(data)
+        d: dict[str, list[str]] = dict()
+        l: list[str] = []
+        for line in data:
+            k, v = line.split("=")
+            l.append(k)
+            v = v.split(",")
+            if d.get(k):
+                d[k].extend(v)
+            else:
+                d[k] = v
+        return [ObstNode(key, d[key], freq=freq) for key, freq in Counter(l).items()]
+
+
+if __name__ == "__main__":
+    print("Hello, welcome to the Optimal Binary Search Tree program!")
+    txt_to_nodes("dictionary(english-chinese).txt")
+    # time_it(find_optimal_binary_search_tree, t)
+    # print2D(t.root)

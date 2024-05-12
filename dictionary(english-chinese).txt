@@ -1,0 +1,17 @@
+me=wo
+he=ta
+she=ta
+it=ta
+we=women
+you=ni
+they=tamen
+not=bu
+american=meiguo ren
+chinese=zhongguo ren
+chinese=zhongwen
+japanese=riben ren
+japanese=ri yu
+korean=hanguo ren, hanyu
+indian=yindu ren, yindu yu
+english=yin yu
+yes=shi

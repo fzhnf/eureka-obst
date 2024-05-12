@@ -20,11 +20,11 @@ from __future__ import annotations
 
 import sys
 from collections import Counter
-from collections.abc import Iterable, Iterator
 from dataclasses import dataclass
 
-from binarySearchTree import BinarySearchTree, BstNode
-from utils import print2D, time_it
+from lib.binarySearchTree import BstNode, BsTree
+
+# from utils import print2D
 
 
 @dataclass
@@ -40,7 +40,12 @@ class ObstNode(BstNode):
     #     return f"Node(key={self.key}, freq={self.freq})"
 
 
-def find_optimal_binary_search_tree(nodes) -> BinarySearchTree:
+@dataclass
+class ObsTree(BsTree):
+    cost: int = 0
+
+
+def find_optimal_binary_search_tree(nodes) -> BsTree:
     """
     This function calculates and prints the optimal binary search tree.
     The dynamic programming algorithm below runs in O(n^2) time.
@@ -69,19 +74,23 @@ def find_optimal_binary_search_tree(nodes) -> BinarySearchTree:
     # increasing order and rearrange its frequencies accordingly.
     nodes.sort(key=lambda node: node.key)
 
-    n = len(nodes)
+    n: int = len(nodes)
 
-    keys = [nodes[i].key for i in range(n)]
-    freqs = [nodes[i].freq for i in range(n)]
+    items: list[dict[str, str]] = [{nodes[i].key: nodes[i].value} for i in range(n)]
+    freqs: list[int] = [nodes[i].freq for i in range(n)]
 
     # This 2D array stores the overall tree cost (which's as minimized as possible);
     # for a single key, cost is equal to frequency of the key.
-    dp = [[freqs[i] if i == j else 0 for j in range(n)] for i in range(n)]
+    dp: list[list[int]] = [
+        [freqs[i] if i == j else 0 for j in range(n)] for i in range(n)
+    ]
     # sum[i][j] stores the sum of key frequencies between i and j inclusive in nodes
     # array
-    total = [[freqs[i] if i == j else 0 for j in range(n)] for i in range(n)]
+    total: list[list[int]] = [
+        [freqs[i] if i == j else 0 for j in range(n)] for i in range(n)
+    ]
     # stores tree roots that will be used later for constructing binary search tree
-    root = [[i if i == j else 0 for j in range(n)] for i in range(n)]
+    root: list[list[int]] = [[i if i == j else 0 for j in range(n)] for i in range(n)]
 
     for interval_length in range(2, n + 1):
         for i in range(n - interval_length + 1):
@@ -101,16 +110,21 @@ def find_optimal_binary_search_tree(nodes) -> BinarySearchTree:
                     dp[i][j] = cost
                     root[i][j] = r
 
-    print("Binary search tree nodes:")
-    for node in nodes:
-        print(node)
+    # print("Binary search tree nodes:")
+    # for node in nodes:
+    #     print(node)
 
-    print(f"\nThe cost of optimal BST for given tree nodes is {dp[0][n - 1]}.")
+    # print(f"\nThe cost of optimal BST for given tree nodes is {dp[0][n - 1]}.")
 
-    t = BinarySearchTree()
+    t = BsTree()
 
     def create_binary_search_tree_util(
-        root, keys, i, j, parent: ObstNode | None, is_left
+        root: list[list[int]],
+        items: list[dict[str, str]],
+        i: int,
+        j: int,
+        parent: ObstNode | None,
+        is_left: bool,
     ):
         """
         Recursive function to print a BST from a root table.
@@ -130,21 +144,28 @@ def find_optimal_binary_search_tree(nodes) -> BinarySearchTree:
             return
 
         node = root[i][j]
-        child = ObstNode(keys[node], freq=freqs[node])
+        # print(f"{items[node]} is the root of the binary search tree.")
+        key = [k for k in items[node].keys()][0]
+        # print(f"the key is {key}")
+        # print(f"the value is {items[node][key]}")
+        # print(f"the freq is {freqs[node]}")
+
+        # child = ObstNode(k, v, freq=freqs[node])
+        child = ObstNode(key, items[node][key], freq=freqs[node])
         if parent == None:  # root does not have a parent
-            print(f"{keys[node]} is the root of the binary search tree.")
+            # print(f"{items[node]} is the root of the binary search tree.")
             t.root = child
         elif is_left:
-            print(f"{keys[node]} is the left child of key {parent}.")
+            # print(f"{items[node]} is the left child of key {parent}.")
             parent.left = child
         else:
-            print(f"{keys[node]} is the right child of key {parent}.")
+            # print(f"{items[node]} is the right child of key {parent}.")
             parent.right = child
 
-        create_binary_search_tree_util(root, keys, i, node - 1, child, True)
-        create_binary_search_tree_util(root, keys, node + 1, j, child, False)
+        create_binary_search_tree_util(root, items, i, node - 1, child, True)
+        create_binary_search_tree_util(root, items, node + 1, j, child, False)
 
-    create_binary_search_tree_util(root, keys, 0, n - 1, None, False)
+    create_binary_search_tree_util(root, items, 0, n - 1, None, False)
     return t
 
 
@@ -152,9 +173,22 @@ if __name__ == "__main__":
     # A sample binary search tree
     # nodes = [_Node(i, randint(1, 50)) for i in range(10, 0, -1)]
 
+    f = {
+        "e": "a",
+        "c": "b",
+        "g": "c",
+        "b": "d",
+        "d": "e",
+        "f": "f",
+        "h": "g",
+        "a": "h",
+        "i": "i",
+        "j": "j",
+    }
     d = ["e", "c", "g", "b", "d", "f", "h", "a", "i", "j", "j", "j", "j"]
+    # print([(key, f[key], freq) for key, freq in Counter(d).items()])
 
-    nodes = [ObstNode(val, freq=freq) for val, freq in Counter(d).items()]
+    nodes = [ObstNode(key, f[key], freq=freq) for key, freq in Counter(d).items()]
     t = find_optimal_binary_search_tree(nodes)
-    print2D(t.root)
-    print(tuple((i.key, i.freq) for i in t.traversal_tree()))
+    # print2D(t.root)
+    # print(tuple((i.key, i.freq) for i in t.traversal_tree()))

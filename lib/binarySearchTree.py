@@ -2,17 +2,17 @@
 
 from __future__ import annotations
 
-import sys
 from collections.abc import Iterable, Iterator
 from dataclasses import dataclass
 from typing import Self
 
-from utils import print2D, time_it
+# from utils import print2D, time_it
 
 
 @dataclass
 class BstNode:
     key: str
+    value: str | list[str]
     left: BstNode | None = None
     right: BstNode | None = None
     parent: BstNode | None = None  # Added in order to delete a node easier
@@ -41,7 +41,7 @@ class BstNode:
 
 
 @dataclass
-class BinarySearchTree:
+class BsTree:
     root: BstNode | None = None
 
     def __bool__(self) -> bool:
@@ -67,11 +67,11 @@ class BinarySearchTree:
     def empty(self) -> bool:
         return not self.root
 
-    def __insert(self, key) -> None:
+    def __insert(self, key, value) -> None:
         """
         Insert a new node in Binary Search Tree with value label
         """
-        new_node = BstNode(key)  # create a new Node
+        new_node = BstNode(key, value)  # create a new Node
         if self.empty():  # if Tree is empty
             self.root = new_node  # set its root
         else:  # Tree is not empty
@@ -92,9 +92,9 @@ class BinarySearchTree:
                     parent_node = parent_node.right
             new_node.parent = parent_node
 
-    def insert(self, *keys) -> Self:
-        for key in keys:
-            self.__insert(key)
+    def insert(self, **dictionary) -> Self:
+        for k, v in dictionary.items():
+            self.__insert(k, v)
         return self
 
     def search(self, key) -> BstNode | None:
@@ -182,10 +182,13 @@ if __name__ == "__main__":
     # import doctest
     #
     # doctest.testmod(verbose=True)
-    t = BinarySearchTree().insert(
-        "e", "c", "g", "b", "d", "f", "h", "a", "i", "j", "j", "j", "j"
-    )
-    print2D(t.root)
+    # d = {"e", "c", "g", "b", "d", "f", "h", "a", "i", "j", "j", "j", "j"}
+    d = {"e": "c", "g": "b", "d": "f", "h": "a", "i": "j", "j": "j"}
+    a = [a for a in d]
+    print(a)
+    t = BsTree().insert(**d)
+    print(t)
+    # print2D(t.root)
 
     print(tuple(i.key for i in t.traversal_tree()))
 
