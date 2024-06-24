@@ -24,8 +24,6 @@ from dataclasses import dataclass
 
 from lib.binarySearchTree import BstNode, BsTree
 
-# from utils import print2D
-
 
 @dataclass
 class ObstNode(BstNode):
@@ -46,30 +44,6 @@ class ObsTree(BsTree):
 
 
 def find_optimal_binary_search_tree(nodes) -> BsTree:
-    """
-    This function calculates and prints the optimal binary search tree.
-    The dynamic programming algorithm below runs in O(n^2) time.
-    Implemented from CLRS (Introduction to Algorithms) book.
-    https://en.wikipedia.org/wiki/Introduction_to_Algorithms
-
-    >>> find_optimal_binary_search_tree([Node(12, 8), Node(10, 34), Node(20, 50),
-                                         Node(42, 3), Node(25, 40), Node(37, 30)])
-    Binary search tree nodes:
-    Node(key=10, freq=34)
-    Node(key=12, freq=8)
-    Node(key=20, freq=50)
-    Node(key=25, freq=40)
-    Node(key=37, freq=30)
-    Node(key=42, freq=3)
-    <BLANKLINE>
-    The cost of optimal BST for given tree nodes is 324.
-    20 is the root of the binary search tree.
-    10 is the left child of key 20.
-    12 is the right child of key 10.
-    25 is the right child of key 20.
-    37 is the right child of key 25.
-    42 is the right child of key 37.
-    """
     # Tree nodes must be sorted first, the code below sorts the keys in
     # increasing order and rearrange its frequencies accordingly.
     nodes.sort(key=lambda node: node.key)
@@ -100,7 +74,6 @@ def find_optimal_binary_search_tree(nodes) -> BsTree:
             total[i][j] = total[i][j - 1] + freqs[j]
 
             # Apply Knuth's optimization
-            # Loop without optimization: for r in range(i, j + 1):
             for r in range(root[i][j - 1], root[i + 1][j] + 1):  # r is a temporal root
                 left = dp[i][r - 1] if r != i else 0  # optimal cost for left subtree
                 right = dp[r + 1][j] if r != j else 0  # optimal cost for right subtree
@@ -109,12 +82,6 @@ def find_optimal_binary_search_tree(nodes) -> BsTree:
                 if dp[i][j] > cost:
                     dp[i][j] = cost
                     root[i][j] = r
-
-    # print("Binary search tree nodes:")
-    # for node in nodes:
-    #     print(node)
-
-    # print(f"\nThe cost of optimal BST for given tree nodes is {dp[0][n - 1]}.")
 
     t = BsTree()
 
@@ -126,40 +93,18 @@ def find_optimal_binary_search_tree(nodes) -> BsTree:
         parent: ObstNode | None,
         is_left: bool,
     ):
-        """
-        Recursive function to print a BST from a root table.
 
-        >>> key = [3, 8, 9, 10, 17, 21]
-        >>> root = [[0, 1, 1, 1, 1, 1], [0, 1, 1, 1, 1, 3], [0, 0, 2, 3, 3, 3], \
-                    [0, 0, 0, 3, 3, 3], [0, 0, 0, 0, 4, 5], [0, 0, 0, 0, 0, 5]]
-        >>> print_binary_search_tree(root, key, 0, 5, -1, False)
-        8 is the root of the binary search tree.
-        3 is the left child of key 8.
-        10 is the right child of key 8.
-        9 is the left child of key 10.
-        21 is the right child of key 10.
-        17 is the left child of key 21.
-        """
         if i > j or i < 0 or j > len(root) - 1:
             return
 
         node = root[i][j]
-        # print(f"{items[node]} is the root of the binary search tree.")
         key = [k for k in items[node].keys()][0]
-        # print(f"the key is {key}")
-        # print(f"the value is {items[node][key]}")
-        # print(f"the freq is {freqs[node]}")
-
-        # child = ObstNode(k, v, freq=freqs[node])
         child = ObstNode(key, items[node][key], freq=freqs[node])
         if parent == None:  # root does not have a parent
-            # print(f"{items[node]} is the root of the binary search tree.")
             t.root = child
         elif is_left:
-            # print(f"{items[node]} is the left child of key {parent}.")
             parent.left = child
         else:
-            # print(f"{items[node]} is the right child of key {parent}.")
             parent.right = child
 
         create_binary_search_tree_util(root, items, i, node - 1, child, True)
